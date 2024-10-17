@@ -1,0 +1,15 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- 书签主体 -->
+  <path d="M25 10 L75 10 L75 90 L50 70 L25 90 Z" fill="#4A90E2" />
+  
+  <!-- 智能芯片图案 -->
+  <rect x="35" y="25" width="30" height="30" fill="none" stroke="white" stroke-width="2" />
+  <line x1="35" y1="35" x2="65" y2="35" stroke="white" stroke-width="2" />
+  <line x1="35" y1="45" x2="65" y2="45" stroke="white" stroke-width="2" />
+  <line x1="45" y1="25" x2="45" y2="55" stroke="white" stroke-width="2" />
+  <line x1="55" y1="25" x2="55" y2="55" stroke="white" stroke-width="2" />
+  
+  <!-- 连接点 -->
+  <circle cx="45" cy="35" r="2" fill="white" />
+  <circle cx="55" cy="45" r="2" fill="white" />
+</svg>
