@@ -1,8 +1,8 @@
 {
-  "name": "bookmark-search",
+  "name": "semantic-bookmark-search",
   "displayName": "Bookmark Search",
   "version": "0.0.1",
-  "description": "Bookmark Search is an AI-powered Chrome extension that helps you quickly find your bookmarks. ",
+  "description": "Semantic Bookmark Search is an AI-powered Chrome extension that helps you quickly find your bookmarks. ",
   "author": "ncuzengliang919@gmail.com",
   "scripts": {
     "dev": "plasmo dev",
