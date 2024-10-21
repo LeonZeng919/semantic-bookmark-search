@@ -1,33 +1,66 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Bookmark Search
 
-## Getting Started
+![Bookmark Search Interface](assets/icon.png)
 
-First, run the development server:
+Bookmark Search is a powerful AI-driven Chrome extension designed to help users quickly find their bookmarks. This tool not only provides intelligent search functionality but also features a user-friendly interface and high-performance efficiency.
 
-```bash
-pnpm dev
-# or
-npm run dev
-```
+![Bookmark Search Interface](assets/bookmark-search.jpg)
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+## Key Features
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+- **Smart Semantic Search**: Use natural language queries to find bookmarks, even if you don't remember the exact title.
+- **Fast and Efficient**: Quickly search through large numbers of bookmarks without performance issues.
+- **User-Friendly**: Intuitive interface makes bookmark searching easy.
+- **Dual Search Modes**: Offers both regular keyword search and semantic search modes.
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+![Bookmark Search Settings](assets/bookmark-search-settings.jpg)
 
-## Making production build
+## How to Use
 
-Run the following:
+1. **Set up AI Provider**:
 
-```bash
-pnpm build
-# or
-npm run build
-```
+   - In Settings, choose your AI Provider (Jina AI or OpenAI).
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+2. **Configure API**:
 
-## Submit to the webstores
+   - Set up your API key.
+   - Optionally, set a base URL (if required).
 
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+3. **Create Bookmark Index**:
+
+   - Click the "Add to Index" button to add your bookmarks to the search index.
+
+4. **Start Searching**:
+   - Enter your query in the search box.
+   - Use Regular Search for keyword matching or Semantic Search for AI-powered understanding.
+
+Bookmark Search combines traditional keyword search with advanced AI-driven semantic search, providing a comprehensive and powerful bookmark management solution that improves work efficiency and enhances the overall browsing experience.
+
+## Development with Plasmo
+
+To start developing with the Plasmo framework:
+
+1. **Install Dependencies**:
+
+   ```
+   pnpm install
+   ```
+
+2. **Start Development Server**:
+
+   ```
+   pnpm dev
+   ```
+
+3. **Build for Production**:
+
+   ```
+   pnpm build
+   ```
+
+4. **Load Extension in Chrome**:
+   - Open Chrome and go to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked" and select the `build/chrome-mv3-dev` folder
+
+These commands will help you set up the development environment, start the development server, build the extension for production, and load it into Chrome for testing.
