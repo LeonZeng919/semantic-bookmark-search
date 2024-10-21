@@ -5,11 +5,12 @@ import Card from "../components/Card"
 
 import "~style.css"
 
+import { useGlobalState } from "~/tabs/content/GlobalStateContext"
 import {
   getIndexedBookmarksCount,
-  getToken,
   semantic_search
-} from "~utils/bookmark-util"
+} from "~utils/BookmarkService"
+import { getToken } from "~utils/StorageStore"
 
 export default function BookmarkManagerPage() {
   const [bookmarks, setBookmarks] = useState<
@@ -29,16 +30,25 @@ export default function BookmarkManagerPage() {
   const [token, setToken] = useState<string | null>(null)
   const [indexedBookmarksCount, setIndexedBookmarksCount] = useState<number>(0)
 
+  const { activeProvider, indexedProvider } = useGlobalState()
+
   useEffect(() => {
     chrome.bookmarks.getRecent(10, (results) => {
       setBookmarks(results)
     })
-    getToken().then((fetchedToken) => {
+
+    const loadSettings = async () => {
+      const fetchedToken = await getToken(activeProvider.toLowerCase())
       setToken(fetchedToken)
       if (!fetchedToken) {
-        setError("No token found. Please set your token in the Settings page.")
+        setError(
+          `No Api Key found. Please set your token in the Settings page.`
+        )
       }
-    })
+    }
+
+    loadSettings()
+
     getIndexedBookmarksCount().then((count) => {
       setIndexedBookmarksCount(count)
       if (count === 0) {
@@ -47,20 +57,27 @@ export default function BookmarkManagerPage() {
     })
   }, [])
 
-  const performSearch = useCallback(
+  useEffect(() => {
+    if (activeProvider !== indexedProvider) {
+      setError("Active provider and indexed provider do not match.")
+    }
+  }, [activeProvider, indexedProvider])
+
+  const performRegularSearch = useCallback(async (query: string) => {
+    setIsRegularSearching(true)
+    const regularStartTime = performance.now()
+    const regularResults = await chrome.bookmarks.search(query)
+    setRegularSearchTime(performance.now() - regularStartTime)
+    setBookmarks(regularResults)
+    setIsRegularSearching(false)
+  }, [])
+
+  const performSemanticSearch = useCallback(
     async (query: string) => {
-      setIsRegularSearching(true)
+      if (activeProvider !== indexedProvider) {
+        return
+      }
       setIsSemanticSearching(true)
-      setError("")
-
-      // Regular search
-      const regularStartTime = performance.now()
-      const regularResults = await chrome.bookmarks.search(query)
-      setRegularSearchTime(performance.now() - regularStartTime)
-      setBookmarks(regularResults)
-      setIsRegularSearching(false)
-
-      // Semantic search
       if (token && indexedBookmarksCount > 0) {
         try {
           const semanticStartTime = performance.now()
@@ -68,7 +85,8 @@ export default function BookmarkManagerPage() {
           setSemanticSearchTime(performance.now() - semanticStartTime)
           setSemanticBookmarks(semanticResults)
         } catch (err) {
-          setError("Error performing semantic search. Please try again.")
+          console.error(err)
+          setError(`Error performing semantic search. ${err}`)
         }
       } else if (!token) {
         setError("No token found. Please set your token in the Settings page.")
@@ -79,6 +97,16 @@ export default function BookmarkManagerPage() {
       setIsSemanticSearching(false)
     },
     [token, indexedBookmarksCount]
+  )
+
+  const performSearch = useCallback(
+    async (query: string) => {
+      await Promise.all([
+        performRegularSearch(query),
+        performSemanticSearch(query)
+      ])
+    },
+    [performRegularSearch, performSemanticSearch]
   )
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,4 +1,4 @@
-import { add_bookmark_to_index, remove_bookmark_from_index } from "~utils/bookmark-util"
+import { add_bookmark_to_index, remove_bookmark_from_index } from "~utils/BookmarkService"
 
 chrome.bookmarks.onCreated.addListener((id, bookmark) => {
   console.log("Bookmark created:", bookmark)

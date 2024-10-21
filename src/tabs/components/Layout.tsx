@@ -10,8 +10,8 @@ export default function Layout() {
       {/* Sidebar */}
       <div className="w-64 bg-gray-800 text-white p-4">
         <div className="mb-8 flex items-center">
-          <img src={iconBase64} alt="Smart Bookmark" className="w-12 h-12" />
-          <h1 className="text-xl font-bold">Smart Bookmark</h1>
+          <img src={iconBase64} alt="Bookmark Search" className="w-12 h-12" />
+          <h1 className="text-xl font-bold">Bookmark Search</h1>
         </div>
         <nav>
           <ul className="space-y-2">

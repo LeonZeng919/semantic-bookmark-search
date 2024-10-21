@@ -1,12 +1,16 @@
+import React from "react"
 import { MemoryRouter } from "react-router-dom"
 
+import { GlobalStateProvider } from "./content/GlobalStateContext"
 import { Routing } from "./routes"
 
 function AppPage() {
   return (
-    <MemoryRouter>
-      <Routing />
-    </MemoryRouter>
+    <GlobalStateProvider>
+      <MemoryRouter>
+        <Routing />
+      </MemoryRouter>
+    </GlobalStateProvider>
   )
 }
 

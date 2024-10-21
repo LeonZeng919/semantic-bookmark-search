@@ -1,9 +1,9 @@
 {
-  "name": "smart-bookmark",
-  "displayName": "Smart Bookmark",
+  "name": "bookmark-search",
+  "displayName": "Bookmark Search",
   "version": "0.0.1",
-  "description": "AI-powered bookmark manager plugin",
-  "author": "leonzeng",
+  "description": "Bookmark Search is an AI-powered Chrome extension that helps you quickly find your bookmarks. ",
+  "author": "ncuzengliang919@gmail.com",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -36,16 +36,6 @@
     ],
     "permissions": [
       "bookmarks"
-    ],
-    "web_accessible_resources": [
-      {
-        "matches": [
-          "<all_urls>"
-        ],
-        "resources": [
-          "tabs/app.html"
-        ]
-      }
     ]
   }
 }
