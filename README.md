@@ -36,6 +36,17 @@ Bookmark Search is a powerful AI-driven Chrome extension designed to help users 
 
 Bookmark Search combines traditional keyword search with advanced AI-driven semantic search, providing a comprehensive and powerful bookmark management solution that improves work efficiency and enhances the overall browsing experience.
 
+## Technology Stack
+
+Bookmark Search is built using a modern and efficient technology stack:
+
+- **Plasmo**: A powerful framework for building browser extensions, providing a smooth development experience.
+- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+- **IndexedDB (via idb)**: A low-latency, high-performance client-side storage solution for structured data.
+- **Embedding**: Utilizes AI-powered embedding techniques for semantic search functionality.
+
+This combination of technologies ensures a fast, responsive, and intelligent bookmark search experience.
+
 ## Development with Plasmo
 
 To start developing with the Plasmo framework:
