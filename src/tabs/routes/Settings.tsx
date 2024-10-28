@@ -7,13 +7,14 @@ import IndexingSettings from "../components/IndexingSettings"
 import TokenSettings from "../components/TokenSettings"
 
 // 定义 Provider 枚举
+
 export enum Provider {
+  Local = "Local",
   Jina = "Jina",
   OpenAI = "OpenAI"
 }
 
 export const providers = Object.values(Provider)
-export const ACTIVE_PROVIDER_KEY = "active_provider"
 
 export default function Settings() {
   const { activeProvider, setActiveProvider } = useGlobalState()
@@ -21,7 +22,7 @@ export default function Settings() {
     // 组件挂载时从storage读取activeProvider
     const loadActiveProvider = async () => {
       const storedProvider = await getActiveProvider()
-      setActiveProvider((storedProvider as Provider) || Provider.Jina)
+      setActiveProvider((storedProvider as Provider) || Provider.Local)
     }
     loadActiveProvider()
   }, [])

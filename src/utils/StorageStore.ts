@@ -19,7 +19,7 @@ export const saveBaseUrl = async (provider: string, baseUrl: string): Promise<vo
 }
 
 export const getActiveProvider = async (): Promise<string | null> => {
-    return await storage.get("active_provider") || Provider.Jina
+    return await storage.get("active_provider") || Provider.Local
 }
 
 export const saveActiveProvider = async (provider: string): Promise<void> => {

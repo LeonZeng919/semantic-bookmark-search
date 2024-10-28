@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 
 import { useGlobalState } from "~/tabs/content/GlobalStateContext"
 import { Provider } from "~tabs/routes/Settings"
@@ -24,7 +24,8 @@ export default function IndexingSettings() {
     activeProvider,
     setActiveProvider,
     indexedProvider,
-    setIndexedProvider
+    setIndexedProvider,
+    modelInitProgress
   } = useGlobalState()
 
   useEffect(() => {
@@ -93,6 +94,15 @@ export default function IndexingSettings() {
             : "Add to index"}
       </button>
       {/* Progress bar for indexing */}
+      {indexedProvider?.toLocaleLowerCase() ===
+        Provider.Local.toLocaleLowerCase() &&
+        modelInitProgress && (
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">
+              Local Model Initialization: {modelInitProgress}
+            </p>
+          </div>
+        )}
       {isIndexing && totalBookmarks > 0 && (
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2.5">

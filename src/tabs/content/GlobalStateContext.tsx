@@ -18,6 +18,8 @@ interface GlobalState {
   setActiveProvider: (value: Provider | null) => void
   indexedProvider: Provider | null
   setIndexedProvider: (value: Provider | null) => void
+  modelInitProgress: string
+  setModelInitProgress: (value: string) => void
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined)
@@ -29,9 +31,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [indexingProgress, setIndexingProgress] = useState(0)
   const [totalBookmarks, setTotalBookmarks] = useState(0)
   const [activeProvider, setActiveProvider] = useState<Provider | null>(
-    Provider.Jina
+    Provider.Local
   )
-  const [indexedProvider, setIndexedProvider] = useState<Provider | null>(null)
+  const [indexedProvider, setIndexedProvider] = useState<Provider | null>(
+    Provider.Local
+  )
+  const [modelInitProgress, setModelInitProgress] = useState<string>("")
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -46,22 +51,43 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     loadInitialData()
+
+    // 添加消息监听器
+    const messageListener = (message: any) => {
+      if (message.action === "update_model_init_progress") {
+        setModelInitProgress(message.progress)
+      }
+    }
+
+    chrome.runtime.onMessage.addListener(messageListener)
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener)
+    }
   }, [])
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
-    if (isIndexing) {
-      interval = setInterval(async () => {
-        const count = await getIndexedBookmarksCount()
-        setIndexingProgress(count)
+    let timeoutId: NodeJS.Timeout | null = null
 
-        if (count === totalBookmarks) {
-          setIsIndexing(false)
-        }
-      }, 1000)
+    const checkIndexingProgress = async () => {
+      if (!isIndexing) return
+
+      const count = await getIndexedBookmarksCount()
+      setIndexingProgress(count)
+
+      if (count === totalBookmarks) {
+        setIsIndexing(false)
+      } else {
+        // 如果还没完成，1秒后再次检查
+        timeoutId = setTimeout(checkIndexingProgress, 1000)
+      }
     }
+
+    // 立即执行一次检查
+    checkIndexingProgress()
+
     return () => {
-      if (interval) clearInterval(interval)
+      if (timeoutId) clearTimeout(timeoutId)
     }
   }, [isIndexing, totalBookmarks])
 
@@ -77,7 +103,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
         activeProvider,
         setActiveProvider,
         indexedProvider,
-        setIndexedProvider
+        setIndexedProvider,
+        modelInitProgress,
+        setModelInitProgress
       }}>
       {children}
     </GlobalStateContext.Provider>

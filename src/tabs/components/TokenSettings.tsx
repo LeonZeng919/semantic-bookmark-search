@@ -10,9 +10,7 @@ import {
 
 export const defaultBaseUrls: Record<string, string> = {
   Jina: "https://api.jina.ai",
-  OpenAI: "https://api.openai.com",
-  Baidu: "https://aip.baidubce.com",
-  Anthropic: "https://api.anthropic.com"
+  OpenAI: "https://api.openai.com"
 }
 
 export default function TokenSettings({ provider }: { provider: string }) {
@@ -33,12 +31,12 @@ export default function TokenSettings({ provider }: { provider: string }) {
   }, [provider])
 
   useEffect(() => {
-    if (!token) {
+    if (provider.toLowerCase() !== "local" && !token) {
       setError("No Api Key found")
     } else {
       setError("")
     }
-  }, [token])
+  }, [token, provider])
 
   const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTokenState(e.target.value)
@@ -89,6 +87,11 @@ export default function TokenSettings({ provider }: { provider: string }) {
           description:
             "Anthropic API key is required to use Anthropic's AI models and services."
         }
+      case "local":
+        return {
+          url: "",
+          description: "No API key is required for local provider."
+        }
       default:
         return {
           url: "",
@@ -98,6 +101,15 @@ export default function TokenSettings({ provider }: { provider: string }) {
   }
 
   const providerInfo = getProviderInfo()
+
+  if (provider.toLowerCase() === "local") {
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4">{provider} Settings</h3>
+        <p>No additional settings required for local provider.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="mb-8">

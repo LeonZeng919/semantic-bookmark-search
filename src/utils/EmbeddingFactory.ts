@@ -1,16 +1,27 @@
-import { ACTIVE_PROVIDER_KEY, Provider, providers } from "~tabs/routes/Settings";
+import { Provider } from "~tabs/routes/Settings";
 import { getActiveProvider, getBaseUrl, getToken } from "./StorageStore";
 import { defaultBaseUrls } from "~tabs/components/TokenSettings";
 
 
 // 定义一个接口来表示不同的嵌入方法
 export interface EmbeddingMethod {
-    getEmbedding(text: string): Promise<number[]>;
+    getEmbedding(texts: string[]): Promise<number[][]>;
 }
 
 // 实现Jina嵌入方法
 export class JinaEmbedding implements EmbeddingMethod {
-    async getEmbedding(text: string): Promise<number[]> {
+    private static instance: JinaEmbedding;
+
+    private constructor() { }
+
+    public static getInstance(): JinaEmbedding {
+        if (!JinaEmbedding.instance) {
+            JinaEmbedding.instance = new JinaEmbedding();
+        }
+        return JinaEmbedding.instance;
+    }
+
+    async getEmbedding(texts: string[]): Promise<number[][]> {
         const provider = Provider.Jina
         const token = await getToken(provider);
         const baseUrl = await getBaseUrl(provider) || defaultBaseUrls[provider]
@@ -30,11 +41,11 @@ export class JinaEmbedding implements EmbeddingMethod {
                     "dimensions": 1024,
                     "late_chunking": false,
                     "embedding_type": "float",
-                    "input": [text]
+                    "input": texts
                 })
             })
             const data = await response.json()
-            return data.data[0].embedding
+            return data.data.map(item => item.embedding)
         } catch (error) {
             console.error('Error getting embedding:', error);
             throw error;
@@ -43,7 +54,18 @@ export class JinaEmbedding implements EmbeddingMethod {
 }
 
 export class OpenAIEmbedding implements EmbeddingMethod {
-    async getEmbedding(text: string): Promise<number[]> {
+    private static instance: OpenAIEmbedding;
+
+    private constructor() { }
+
+    public static getInstance(): OpenAIEmbedding {
+        if (!OpenAIEmbedding.instance) {
+            OpenAIEmbedding.instance = new OpenAIEmbedding();
+        }
+        return OpenAIEmbedding.instance;
+    }
+
+    async getEmbedding(texts: string[]): Promise<number[][]> {
         const provider = Provider.OpenAI
         const token = await getToken(provider);
         const baseUrl = await getBaseUrl(provider) || defaultBaseUrls[provider]
@@ -59,11 +81,11 @@ export class OpenAIEmbedding implements EmbeddingMethod {
                 },
                 body: JSON.stringify({
                     "model": "text-embedding-ada-002",
-                    "input": [text]
+                    "input": texts
                 })
             })
             const data = await response.json()
-            return data.data[0].embedding
+            return data.data.map(item => item.embedding)
         } catch (error) {
             console.error('Error getting embedding:', error);
             throw error;
@@ -73,21 +95,44 @@ export class OpenAIEmbedding implements EmbeddingMethod {
 
 // 你可以添加其他嵌入方法的实现，例如：
 export class LocalEmbedding implements EmbeddingMethod {
-    async getEmbedding(text: string): Promise<number[]> {
-        // 实现本地嵌入逻辑
-        return text.split('').map(char => char.charCodeAt(0));
+    private static instance: LocalEmbedding;
+
+    private constructor() { }
+
+    public static getInstance(): LocalEmbedding {
+        if (!LocalEmbedding.instance) {
+            LocalEmbedding.instance = new LocalEmbedding();
+        }
+        return LocalEmbedding.instance;
+    }
+
+    async getEmbedding(texts: string[]): Promise<number[][]> {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(
+                { action: 'extract_features', sentences: texts },
+                (response) => {
+                    if (chrome.runtime.lastError) {
+                        reject(chrome.runtime.lastError);
+                    } else {
+                        resolve(response);
+                    }
+                }
+            );
+        });
     }
 }
 
 // 工厂函数来获取嵌入方法实例
 export async function getEmbeddingMethod(): Promise<EmbeddingMethod> {
-    const method = await getActiveProvider()
+    const method = await getActiveProvider();
     switch (method) {
         case Provider.OpenAI:
-            return new OpenAIEmbedding();
-        case 'jina':
+            return OpenAIEmbedding.getInstance();
+        case Provider.Jina:
+            return JinaEmbedding.getInstance();
+        case Provider.Local:
+            return LocalEmbedding.getInstance();
         default:
-            return new JinaEmbedding();
+            return JinaEmbedding.getInstance();
     }
 }
-
