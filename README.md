@@ -4,6 +4,8 @@
 
 Bookmark Search is a powerful AI-driven Chrome extension designed to help users quickly find their bookmarks. This tool not only provides intelligent search functionality but also features a user-friendly interface and high-performance efficiency.
 
+[View Chrome Extension](https://chromewebstore.google.com/detail/bookmark-search/jigokhdddadhminchmmfcpihhpnfhecj?hl=zh-CN&utm_source=ext_sidebar)
+
 ![Bookmark Search Interface](assets/bookmark-search.jpg)
 
 ## Key Features
